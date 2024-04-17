@@ -220,11 +220,11 @@ from gem5.components.cachehierarchies.ruby.mesi_two_level_cache_hierarchy import
 )
 
 cache_hierarchy = MESITwoLevelCacheHierarchy(
-    l1d_size="32kB",
+    l1d_size="16kB",
     l1d_assoc=8,
-    l1i_size="32kB",
+    l1i_size="16kB",
     l1i_assoc=8,
-    l2_size="256kB",
+    l2_size="1024kB",
     l2_assoc=16,
     num_l2_banks=2,
 )
@@ -283,7 +283,7 @@ except FileExistsError:
 # The runscript.sh file places `m5 exit` before and after the following command
 # Therefore, we only pass this command without m5 exit.
 
-command = f"{args.benchmark} {args.size} {output_dir}"
+command = "{} {} {}".format(args.benchmark, args.size, output_dir)
 
 # For enabling CustomResource, we pass an additional parameter to mount the
 # correct partition.
@@ -320,6 +320,7 @@ simulator = Simulator(
     board=board,
     on_exit_event={
         ExitEvent.EXIT: handle_exit(),
+        ExitEvent.MAX_INSTS: handle_insExit(board, args),
     },
 )
 
