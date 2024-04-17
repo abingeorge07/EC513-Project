@@ -27,7 +27,7 @@
 from ..abstract_l2_cache import AbstractL2Cache
 from ......utils.override import *
 
-from m5.objects import MessageBuffer, RubyCache
+from m5.objects import MessageBuffer, RubyCache, RandomRP
 
 import math
 
