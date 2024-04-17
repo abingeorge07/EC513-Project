@@ -179,6 +179,23 @@ parser.add_argument(
     choices=size_choices,
 )
 
+# The following are optional arguments for max insts and warmup insts.
+parser.add_argument(
+    "--maxIns",
+    type=int,
+    required=False,
+    default=100000000,
+    help="Total number of instructions to run.",
+)
+
+parser.add_argument(
+    "--warmup",
+    type=int,
+    required=False,
+    default=10000000,
+    help="Total number of instructions to run.",
+)
+
 args = parser.parse_args()
 
 # We expect the user to input the full path of the disk-image.
@@ -289,10 +306,14 @@ def handle_exit():
     print("Resetting stats at the start of ROI!")
     m5.stats.reset()
     processor.switch()
-    yield False  # E.g., continue the simulation.
+    yield True  # Stop the simulation. We're done.
+
+
+def handle_insExit(board, args):
+    print("Done with all the instructions")
     print("Dump stats at the end of the ROI!")
     m5.stats.dump()
-    yield True  # Stop the simulation. We're done.
+    yield True
 
 
 simulator = Simulator(
@@ -312,6 +333,10 @@ print("Using KVM cpu")
 m5.stats.reset()
 
 # We start the simulation
+simulator.run()
+
+print("Running again") 
+simulator.schedule_max_insts(int(args.maxIns))
 simulator.run()
 
 # We print the final simulation statistics.
