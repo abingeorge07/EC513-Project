@@ -1,4 +1,4 @@
-#include "mem/cache/replacement_policies/hawkeye.hh"
+#include "mem/cache/replacement_policies/hawkeye_rp.hh"
 
 #include <cassert>
 #include <memory>
@@ -6,11 +6,12 @@
 // this stays for testing purposes
 #include "base/random.hh"
 // this file seems to be built by build_tools, I don't know if it's name will be this!
-#include "params/BaseReplacementPolicy.hh"
+//#include "params/BaseReplacementPolicy.hh"
+#include "params/HawkeyeRP.hh"
 
 namespace gem5
-{
-
+{   
+    
 namespace replacement_policy
 {
 
@@ -19,6 +20,7 @@ Hawkeye::Hawkeye(const Params &p)
 {
 }
 
+// this is called when an entry is evicted
 void
 Hawkeye::invalidate(const std::shared_ptr<ReplacementData>& replacement_data)
 {
@@ -27,13 +29,15 @@ Hawkeye::invalidate(const std::shared_ptr<ReplacementData>& replacement_data)
         replacement_data)->valid = false;
 }
 
+// this is called when an entry is touched
 void
-Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data) const
+Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data, const PacketPtr pkt)
 {
 }
 
+// this is called when a new entry is inserted
 void
-Hawkeye::reset(const std::shared_ptr<ReplacementData>& replacement_data) const
+Hawkeye::reset(const std::shared_ptr<ReplacementData>& replacement_data, const PacketPtr pkt)
 {
     // Unprioritize replacement data victimization
     std::static_pointer_cast<HawkeyeReplData>(
@@ -70,6 +74,22 @@ std::shared_ptr<ReplacementData>
 Hawkeye::instantiateEntry()
 {
     return std::shared_ptr<ReplacementData>(new HawkeyeReplData());
+}
+
+// Implement getPC() and setPC() methods
+PCType
+Hawkeye::HawkeyeReplData::getPC()
+{
+    return pc;
+}
+
+void
+Hawkeye::HawkeyeReplData::setPC(PacketPtr pkt)
+{
+    // Need to hash the PC 
+    // Don't know how good it will work
+    // Will take the first 13 bits of the PC
+    pc = pkt->req->getPC() & 0x1FFF;
 }
 
 } // namespace replacement_policy
