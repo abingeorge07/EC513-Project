@@ -102,6 +102,12 @@ class RandomRP(BaseReplacementPolicy):
     cxx_header = "mem/cache/replacement_policies/random_rp.hh"
 
 
+class HawkeyeRP(BaseReplacementPolicy):
+    type = "HawkeyeRP"
+    cxx_class = "gem5::replacement_policy::Hawkeye"
+    cxx_header = "mem/cache/replacement_policies/hawkeye.hh"
+
+
 class BRRIPRP(BaseReplacementPolicy):
     type = "BRRIPRP"
     cxx_class = "gem5::replacement_policy::BRRIP"
