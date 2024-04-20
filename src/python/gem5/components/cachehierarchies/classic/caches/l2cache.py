@@ -26,12 +26,15 @@
 
 from .....utils.override import *
 
-from m5.objects import Cache, Clusivity, BasePrefetcher, StridePrefetcher
+from m5.objects import Cache, Clusivity, BasePrefetcher, StridePrefetcher, Cache2
 
 from typing import Type
 
+from m5.objects.ReplacementPolicies import *
+from m5.params import *
 
-class L2Cache(Cache):
+
+class L2Cache(Cache2):
     """
     A simple L2 Cache with default values.
     """
@@ -60,3 +63,4 @@ class L2Cache(Cache):
         self.writeback_clean = writeback_clean
         self.clusivity = clusivity
         self.prefetcher = PrefetcherCls()
+      
