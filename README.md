@@ -15,6 +15,13 @@ instead of using MESI cache, it uses PrivateL1SharedL2CacheHierarchy
 
 - [Cache.py](/src/mem/cache/Cache.py): Includes the class Cache2 which is used by the L2 cache. (src/mem/cache/Cache.py)
 
+## IMPORTANT NOTE
+- After a clean install, execute these to avoid errors:
+```bash
+chmod +x util/cpt_upgrader.py
+chmod +x ext/libelf/native-elf-format
+```
+
 ### Implementation
 1) Create your own replacement policy.
 2) In order to set the replacement policies for both caches, change the replacement policy attribute of both classes Cache(L1D & L1I) and Cache2(L2) which can be found [/src/mem/cache/Cache.py](/src/mem/cache/Cache.py).
