@@ -186,6 +186,7 @@ bool
 CacheMemory::tryCacheAccess(Addr address, RubyRequestType type,
                             DataBlock*& data_ptr)
 {
+    std::cout << "CacheMemory::tryCacheAccess(Addr, RubyRequestType, DataBlock) is used!" << std::endl;
     DPRINTF(RubyCache, "address: %#x\n", address);
     AbstractCacheEntry* entry = lookup(address);
     if (entry != nullptr) {
@@ -211,6 +212,7 @@ bool
 CacheMemory::testCacheAccess(Addr address, RubyRequestType type,
                              DataBlock*& data_ptr)
 {
+    std::cout << "CacheMemory::testCacheAccess(Addr, RubyRequestType, DataBlock) is used!" << std::endl;
     DPRINTF(RubyCache, "address: %#x\n", address);
     AbstractCacheEntry* entry = lookup(address);
     if (entry != nullptr) {
@@ -363,6 +365,7 @@ CacheMemory::lookup(Addr address) const
 void
 CacheMemory::setMRU(Addr address)
 {
+    std::cout << "CacheMemory::setMRU(Addr) is used!" << std::endl;
     AbstractCacheEntry* entry = lookup(makeLineAddress(address));
     if (entry != nullptr) {
         m_replacementPolicy_ptr->touch(entry->replacementData);
@@ -373,6 +376,7 @@ CacheMemory::setMRU(Addr address)
 void
 CacheMemory::setMRU(AbstractCacheEntry *entry)
 {
+    std::cout << "CacheMemory::setMRU(AbstractCacheEntry) is used!" << std::endl;
     assert(entry != nullptr);
     m_replacementPolicy_ptr->touch(entry->replacementData);
     entry->setLastAccess(curTick());
@@ -381,6 +385,7 @@ CacheMemory::setMRU(AbstractCacheEntry *entry)
 void
 CacheMemory::setMRU(Addr address, int occupancy)
 {
+    std::cout << "CacheMemory::setMRU(Addr, int) is used!" << std::endl;
     AbstractCacheEntry* entry = lookup(makeLineAddress(address));
     if (entry != nullptr) {
         // m_use_occupancy can decide whether we are using WeightedLRU

@@ -53,13 +53,17 @@ class MRU : public Base
     /** MRU-specific implementation of replacement data. */
     struct MRUReplData : ReplacementData
     {
-        /** Tick on which the entry was last touched. */
-        Tick lastTouchTick;
+        // Flag informing if the replacement data is valid or not.
+        // Invalid entries are prioritized to be evicted.
+        bool valid;
+
 
         /**
          * Default constructor. Invalidate data.
          */
-        MRUReplData() : lastTouchTick(0) {}
+        MRUReplData(){
+            valid = false;
+        }
     };
 
   public:
@@ -82,8 +86,10 @@ class MRU : public Base
      *
      * @param replacement_data Replacement data to be touched.
      */
+    void touch(const std::shared_ptr<ReplacementData>& replacement_data,
+        const PacketPtr pkt) override;
     void touch(const std::shared_ptr<ReplacementData>& replacement_data) const
-                                                                     override;
+        override;
 
     /**
      * Reset replacement data. Used when an entry is inserted.
@@ -91,8 +97,10 @@ class MRU : public Base
      *
      * @param replacement_data Replacement data to be reset.
      */
+    void reset(const std::shared_ptr<ReplacementData>& replacement_data,
+        const PacketPtr pkt) override;
     void reset(const std::shared_ptr<ReplacementData>& replacement_data) const
-                                                                     override;
+        override;
 
     /**
      * Find replacement victim using access timestamps.

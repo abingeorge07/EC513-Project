@@ -141,6 +141,7 @@ SectorTags::invalidate(CacheBlk *blk)
 CacheBlk*
 SectorTags::accessBlock(const PacketPtr pkt, Cycles &lat)
 {
+    std::cout << "SectorTags::accessBlock(PacketPtr, Cycles) called" << std::endl;
     CacheBlk *blk = findBlock(pkt->getAddr(), pkt->isSecure());
 
     // Access all tags in parallel, hence one in each way.  The data side
@@ -178,6 +179,7 @@ SectorTags::accessBlock(const PacketPtr pkt, Cycles &lat)
 void
 SectorTags::insertBlock(const PacketPtr pkt, CacheBlk *blk)
 {
+    std::cout << "SectorTags::insertBlock(PacketPtr, CacheBlk) called" << std::endl;
     // Get block's sector
     SectorSubBlk* sub_blk = static_cast<SectorSubBlk*>(blk);
     const SectorBlk* sector_blk = sub_blk->getSectorBlock();
@@ -203,6 +205,7 @@ SectorTags::insertBlock(const PacketPtr pkt, CacheBlk *blk)
 void
 SectorTags::moveBlock(CacheBlk *src_blk, CacheBlk *dest_blk)
 {
+    std::cout << "SectorTags::moveBlock(CacheBlk, CacheBlk) called" << std::endl;
     const bool dest_was_valid =
         static_cast<SectorSubBlk*>(dest_blk)->getSectorBlock()->isValid();
 

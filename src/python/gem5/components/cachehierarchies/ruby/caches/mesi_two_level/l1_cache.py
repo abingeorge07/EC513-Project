@@ -29,7 +29,7 @@ from ......isas import ISA
 from ..abstract_l1_cache import AbstractL1Cache
 from ......utils.override import *
 
-from m5.objects import MessageBuffer, RubyPrefetcher, RubyCache, ClockDomain, RandomRP
+from m5.objects import MessageBuffer, RubyPrefetcher, RubyCache, ClockDomain, SHiPMemRP
 
 import math
 
@@ -59,14 +59,14 @@ class L1Cache(AbstractL1Cache):
             assoc=l1i_assoc,
             start_index_bit=self.getBlockSizeBits(),
             is_icache=True,
-            replacement_policy= RandomRP(),
+            replacement_policy= SHiPMemRP(),
         )
         self.L1Dcache = RubyCache(
             size=l1d_size,
             assoc=l1d_assoc,
             start_index_bit=self.getBlockSizeBits(),
             is_icache=False,
-            replacement_policy= RandomRP(),
+            replacement_policy= SHiPMemRP(),
         )
         self.l2_select_num_bits = int(math.log(num_l2Caches, 2))
         self.clk_domain = clk_domain

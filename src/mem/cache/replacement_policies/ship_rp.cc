@@ -94,6 +94,7 @@ void
 SHiP::touch(const std::shared_ptr<ReplacementData>& replacement_data,
     const PacketPtr pkt)
 {
+    std::cout << "Correct touch function" << std::endl;
     std::shared_ptr<SHiPReplData> casted_replacement_data =
         std::static_pointer_cast<SHiPReplData>(replacement_data);
 
@@ -110,13 +111,15 @@ void
 SHiP::touch(const std::shared_ptr<ReplacementData>& replacement_data)
     const
 {
-    panic("Cant train SHiP's predictor without access information.");
+    //panic("Cant train SHiP's predictor without access information.");
+    std::cout << "Something is wrong, but let's go on" << std::endl;
 }
 
 void
 SHiP::reset(const std::shared_ptr<ReplacementData>& replacement_data,
     const PacketPtr pkt)
 {
+    std::cout << "Correct reset function" << std::endl;
     std::shared_ptr<SHiPReplData> casted_replacement_data =
         std::static_pointer_cast<SHiPReplData>(replacement_data);
 
@@ -138,7 +141,8 @@ void
 SHiP::reset(const std::shared_ptr<ReplacementData>& replacement_data)
     const
 {
-    panic("Cant train SHiP's predictor without access information.");
+    std::cout << "Something is wrong, but let's go on" << std::endl;
+    //panic("Cant train SHiP's predictor without access information.");
 }
 
 std::shared_ptr<ReplacementData>

@@ -306,6 +306,7 @@ def handle_exit():
     print("Resetting stats at the start of ROI!")
     m5.stats.reset()
     processor.switch()
+    m5.scheduleTickExitFromCurrent(29700000000)
     yield True  # Stop the simulation. We're done.
 
 

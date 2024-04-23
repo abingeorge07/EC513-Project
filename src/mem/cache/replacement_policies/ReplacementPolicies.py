@@ -95,6 +95,11 @@ class MRURP(BaseReplacementPolicy):
     cxx_class = "gem5::replacement_policy::MRU"
     cxx_header = "mem/cache/replacement_policies/mru_rp.hh"
 
+class HawkeyeRP(BaseReplacementPolicy):
+    type = "HawkeyeRP"
+    cxx_class = "gem5::replacement_policy::Hawkeye"
+    cxx_header = "mem/cache/replacement_policies/hawkeye_rp.hh"
+
 
 class RandomRP(BaseReplacementPolicy):
     type = "RandomRP"

@@ -75,6 +75,7 @@ template<class Entry>
 void
 AssociativeSet<Entry>::accessEntry(Entry *entry)
 {
+    std::cout << "AssociativeSet<Entry>::accessEntry(Entry *entry) called" << std::endl;
     replacementPolicy->touch(entry->replacementData);
 }
 

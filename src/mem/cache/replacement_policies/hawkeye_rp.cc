@@ -26,12 +26,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mem/cache/replacement_policies/mru_rp.hh"
+#include "mem/cache/replacement_policies/hawkeye_rp.hh"
 
 #include <cassert>
 #include <memory>
 
-#include "params/MRURP.hh"
+#include "params/HawkeyeRP.hh"
 #include "sim/cur_tick.hh"
 
 namespace gem5
@@ -40,46 +40,47 @@ namespace gem5
 namespace replacement_policy
 {
 
-MRU::MRU(const Params &p)
+Hawkeye::Hawkeye(const Params &p)
   : Base(p)
 {
 }
 
 void
-MRU::invalidate(const std::shared_ptr<ReplacementData>& replacement_data)
+Hawkeye::invalidate(const std::shared_ptr<ReplacementData>& replacement_data)
 {
     // Unprioritize replacement data victimization
-    std::static_pointer_cast<MRUReplData>(
+    std::static_pointer_cast<HawkeyeReplData>(
         replacement_data)->valid = false;
 }
 
-void MRU::touch(const std::shared_ptr<ReplacementData>& replacement_data) const
+void Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data) const
 {
-    panic("touch() should never be called with a single MRU replacement "
+    panic("touch() should never be called with a single Hawkeye replacement "
           "policy. It should always be called with a packet.\n");
 }
 
-void MRU::touch(const std::shared_ptr<ReplacementData>& replacement_data,
+void Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data,
         const PacketPtr pkt)
 {
     ;
 }
 
 void
-MRU::reset(const std::shared_ptr<ReplacementData>& replacement_data,
+Hawkeye::reset(const std::shared_ptr<ReplacementData>& replacement_data,
     const PacketPtr pkt)
 {   
     ;
 }
 
-void MRU::reset(const std::shared_ptr<ReplacementData>& replacement_data)
+
+void Hawkeye::reset(const std::shared_ptr<ReplacementData>& replacement_data)
     const
 {
     panic("Cant train SHiP's predictor without access information.");
 }
 
 ReplaceableEntry*
-MRU::getVictim(const ReplacementCandidates& candidates) const
+Hawkeye::getVictim(const ReplacementCandidates& candidates) const
 {
 
     // Do not forget to check valid entries somewhere
@@ -88,9 +89,9 @@ MRU::getVictim(const ReplacementCandidates& candidates) const
 }
 
 std::shared_ptr<ReplacementData>
-MRU::instantiateEntry()
+Hawkeye::instantiateEntry()
 {
-    return std::shared_ptr<ReplacementData>(new MRUReplData());
+    return std::shared_ptr<ReplacementData>(new HawkeyeReplData());
 }
 
 } // namespace replacement_policy
