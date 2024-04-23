@@ -1,14 +1,14 @@
 # EC513-Project
 
 ## UPDATE 1: Changes Made from Original GEM5 Source
-- [l1_cache.py](src/python/gem5/components/cachehierarchies\ruby\caches/mesi_two_level/l1_cache.py) : Lines 62 & 69 changed replacement policy to random
-- [l2_cache.py](src/python/gem5/components/cachehierarchies\ruby\caches/mesi_two_level/l2_cache.py) : Line 46 changed replacement policy to random
+- [l1_cache.py](src/python/gem5/components/cachehierarchies/ruby/caches/mesi_two_level/l1_cache.py) : Lines 62 & 69 changed replacement policy to random
+- [l2_cache.py](src/python/gem5/components/cachehierarchies/ruby/caches/mesi_two_level/l2_cache.py) : Line 46 changed replacement policy to random
 
-- [config file](configs\example\gem5_library\x86-spec-cpu2017-benchmarks.py) : Updated config file to set number of instructions to run, but not working too well :(
+- [config file](configs/example/gem5_library/x86-spec-cpu2017-benchmarks.py) : Updated config file to set number of instructions to run, but not working too well :(
 
 
 ## UPDATE 2: Changes made to use "Classic Cache Hierarchy"
-- [new-config file](configs\example\gem5_library\x86-spec-cpu2017-benchmarks.py):
+- [new-config file](configs/example/gem5_library/x86-spec-cpu2017-benchmarks.py):
 instead of using MESI cache, it uses PrivateL1SharedL2CacheHierarchy
 
 - [l2cache.py](/src/python/gem5/components/cachehierarchies/classic/caches/l2cache.py): Using a new cache class (Cache2) which is a copy of Cache.py, the main reason for this change is to be able to use two cache replacement policy for each level of cache at the same time. (src/python/gem5/components/cachehierarchies/classic/caches/l2cache.py)
