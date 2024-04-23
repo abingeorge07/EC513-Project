@@ -35,6 +35,10 @@ from ...boards.abstract_board import AbstractBoard
 from ....isas import ISA
 from m5.objects import Cache, L2XBar, BaseXBar, SystemXBar, BadAddr, Port
 
+from m5.params import *
+
+from m5.objects.ReplacementPolicies import *
+
 from ....utils.override import *
 
 
@@ -123,11 +127,17 @@ class PrivateL1SharedL2CacheHierarchy(
             for i in range(board.get_processor().get_num_cores())
         ]
         self.l1dcaches = [
-            L1DCache(size=self._l1d_size, assoc=self._l1d_assoc)
+            L1DCache(
+                size=self._l1d_size, 
+                assoc=self._l1d_assoc
+            )
             for i in range(board.get_processor().get_num_cores())
         ]
         self.l2bus = L2XBar()
-        self.l2cache = L2Cache(size=self._l2_size, assoc=self._l2_assoc)
+        self.l2cache = L2Cache(
+            size=self._l2_size, 
+            assoc=self._l2_assoc
+        )
         # ITLB Page walk caches
         self.iptw_caches = [
             MMUCache(size="8KiB", writeback_clean=False)

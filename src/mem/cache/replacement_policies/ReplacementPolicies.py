@@ -134,6 +134,11 @@ class NRURP(BRRIPRP):
     btp = 100
     num_bits = 1
 
+class HawkeyeRP(BaseReplacementPolicy):
+    type = "HawkeyeRP"
+    cxx_class = "gem5::replacement_policy::Hawkeye"
+    cxx_header = "mem/cache/replacement_policies/hawkeye_rp.hh"
+
 
 class SHiPRP(BRRIPRP):
     type = "SHiPRP"
