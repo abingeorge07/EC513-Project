@@ -138,6 +138,13 @@ class HawkeyeRP(BaseReplacementPolicy):
     type = "HawkeyeRP"
     cxx_class = "gem5::replacement_policy::Hawkeye"
     cxx_header = "mem/cache/replacement_policies/hawkeye_rp.hh"
+    
+    # Hawkeye parameters
+    cache_size = Param.Int(64, "Cache size in KB")
+    assoc = Param.Int(8, "Associativity")
+    index_bit_count = Param.Int(6, "Number of index bits")
+    tag_bit_count = Param.Int(12, "Number of tag bits")
+
 
 
 class SHiPRP(BRRIPRP):

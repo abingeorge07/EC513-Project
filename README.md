@@ -21,7 +21,12 @@ instead of using MESI cache, it uses PrivateL1SharedL2CacheHierarchy
 chmod +x util/cpt_upgrader.py
 chmod +x ext/libelf/native-elf-format
 ```
-
+If you see an error like
+```bash
+param_HawkeyeRP.cc:(.rodata.cst8+0x28): undefined reference to `gem5::HawkeyeRPParams::create() const'
+```
+then please refer to this link:
+https://stackoverflow.com/questions/72502976/unable-to-build-gem5-after-creation-of-custom-replacement-policy-undefined-refe
 ### Implementation
 1) Create your own replacement policy.
 2) In order to set the replacement policies for both caches, change the replacement policy attribute of both classes Cache(L1D & L1I) and Cache2(L2) which can be found [/src/mem/cache/Cache.py](/src/mem/cache/Cache.py).

@@ -35,14 +35,12 @@ class Hawkeye : public Base
     /** Random-specific implementation of replacement data. */
     struct HawkeyeReplData : ReplacementData
     {
-
+        public:
         /**
          * Flag informing if the replacement data is valid or not.
          * Invalid entries are prioritized to be evicted.
          */
         bool valid;
-
-        PCType pc;
 
         /**
          * Default constructor. Invalidate data.
@@ -50,15 +48,20 @@ class Hawkeye : public Base
         HawkeyeReplData(){
             valid = false;
         }
-
-        PCType getPC();
-
-        void setPC(const PacketPtr pkt);
-
-
+    };
+    struct RRIPCacheData{
+        int RRIP;
+        int index;
+        bool first_touch;
+        uint64_t tag;
     };
 
   public:
+    std::vector<std::vector<RRIPCacheData>> RRIP_vector;
+    int vector_size;
+    int way_assoc;
+    int index_bit_count;
+    int index_bit_mask;
     typedef HawkeyeRPParams Params;
     Hawkeye(const Params &p);
     ~Hawkeye() = default;
