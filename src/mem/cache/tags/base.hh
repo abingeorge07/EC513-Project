@@ -8,7 +8,7 @@
  * to a hardware implementation of the functionality of the software
  * licensed hereunder.  You may use the software subject to the license
  * terms below provided that you ensure that this notice is replicated
- * unmodified and in its entirety in all distributions of the software,
+ * unmodified and in its entiretdy in all distributions of the software,
  * modified or unmodified, in source code or in binary form.
  *
  * Copyright (c) 2003-2005 The Regents of The University of Michigan
@@ -67,9 +67,18 @@ class System;
 class IndexingPolicy;
 class ReplaceableEntry;
 
+// dataStruct used to share pkt data to replacement policy file
+// struct dataStruct{
+//     PacketPtr pkt;
+// };
+
+
+
+
 /**
  * A common base class of Cache tagstore objects.
  */
+
 class BaseTags : public ClockedObject
 {
   protected:
@@ -280,7 +289,7 @@ class BaseTags : public ClockedObject
      */
     virtual CacheBlk* findVictim(Addr addr, const bool is_secure,
                                  const std::size_t size,
-                                 std::vector<CacheBlk*>& evict_blks) = 0;
+                                 std::vector<CacheBlk*>& evict_blks, void* testPtr) = 0;
 
     /**
      * Access block and update replacement data. May not succeed, in which case

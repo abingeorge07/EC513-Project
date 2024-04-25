@@ -31,6 +31,10 @@ from m5.objects import Cache, BasePrefetcher, StridePrefetcher
 from .....utils.override import *
 
 
+from m5.objects.ReplacementPolicies import *
+from m5.params import *
+
+
 class L1ICache(Cache):
     """
     A simple L1 instruction cache with default values.
@@ -61,3 +65,4 @@ class L1ICache(Cache):
         self.tgts_per_mshr = tgts_per_mshr
         self.writeback_clean = writeback_clean
         self.prefetcher = PrefetcherCls()
+

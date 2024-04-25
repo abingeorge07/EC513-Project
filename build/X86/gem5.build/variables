@@ -1,0 +1,3 @@
+NUMBER_BITS_PER_SET = '128'
+USE_X86_ISA = True
+PROTOCOL = 'MESI_Two_Level'

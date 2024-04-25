@@ -71,6 +71,11 @@ from m5.stats.gem5stats import get_simstat
 from m5.util import warn
 from m5.util import fatal
 
+from m5.objects import BaseCache
+from m5.objects.ReplacementPolicies import *
+
+
+
 # We check for the required gem5 build.
 
 requires(
@@ -155,6 +160,22 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--maxIns",
+    type=int,
+    required=False,
+    default=100000000,
+    help="Total number of instructions to run.",
+)
+
+parser.add_argument(
+    "--warmup",
+    type=int,
+    required=False,
+    default=10000000,
+    help="Total number of instructions to run.",
+)
+
+parser.add_argument(
     "--partition",
     type=str,
     required=False,
@@ -179,23 +200,6 @@ parser.add_argument(
     choices=size_choices,
 )
 
-# The following are optional arguments for max insts and warmup insts.
-parser.add_argument(
-    "--maxIns",
-    type=int,
-    required=False,
-    default=100000000,
-    help="Total number of instructions to run.",
-)
-
-parser.add_argument(
-    "--warmup",
-    type=int,
-    required=False,
-    default=10000000,
-    help="Total number of instructions to run.",
-)
-
 args = parser.parse_args()
 
 # We expect the user to input the full path of the disk-image.
@@ -210,27 +214,33 @@ if not os.path.exists(args.image):
     print(
         "https://gem5art.readthedocs.io/en/latest/tutorials/spec-tutorial.html"
     )
-    fatal(f"The disk-image is not found at {args.image}")
+    fatal("The disk-image is not found at {}".format(args.image))
 
 # Setting up all the fixed system parameters here
 # Caches: MESI Two Level Cache Hierarchy
 
-from gem5.components.cachehierarchies.ruby.mesi_two_level_cache_hierarchy import (
-    MESITwoLevelCacheHierarchy,
+# from gem5.components.cachehierarchies.ruby.mesi_two_level_cache_hierarchy import (
+#     MESITwoLevelCacheHierarchy,
+# )
+
+from gem5.components.cachehierarchies.classic.private_l1_shared_l2_cache_hierarchy import(
+     PrivateL1SharedL2CacheHierarchy,
 )
 
-cache_hierarchy = MESITwoLevelCacheHierarchy(
+
+
+cache_hierarchy = PrivateL1SharedL2CacheHierarchy(
     l1d_size="16kB",
     l1d_assoc=8,
     l1i_size="16kB",
     l1i_assoc=8,
     l2_size="1024kB",
     l2_assoc=16,
-    num_l2_banks=2,
 )
+
+
 # Memory: Dual Channel DDR4 2400 DRAM device.
 # The X86 board only supports 3 GB of main memory.
-
 memory = DualChannelDDR4_2400(size="3GB")
 
 # Here we setup the processor. This is a special switchable processor in which
@@ -301,18 +311,24 @@ board.set_kernel_disk_workload(
 )
 
 
+
 def handle_exit():
     print("Done bootling Linux")
     print("Resetting stats at the start of ROI!")
     m5.stats.reset()
     processor.switch()
-    yield True  # Stop the simulation. We're done.
+    # m5.scheduleTickExitFromCurrent(297000000000)
+    yield True  # E.g., continue the simulation.
+    # print("Dump stats at the end of the ROI!")
+    # m5.stats.dump()
+    # yield True  # Stop the simulation. We're done.
+
 
 
 def handle_insExit(board, args):
     print("Done with all the instructions")
     print("Dump stats at the end of the ROI!")
-    m5.stats.dump()
+    
     yield True
 
 
@@ -331,25 +347,28 @@ globalStart = time.time()
 print("Running the simulation")
 print("Using KVM cpu")
 
+# # warm up
+# simulator.schedule_max_insts(args.warmup)
+simulator.run()
 m5.stats.reset()
 
-# We start the simulation
-simulator.run()
+
 
 print("Running again") 
+simulator.schedule_max_insts(int(args.warmup))
+simulator.run()
+
+m5.stats.reset()
 simulator.schedule_max_insts(int(args.maxIns))
 simulator.run()
+
+m5.stats.dump()
 
 # We print the final simulation statistics.
 
 print("Done with the simulation")
 print()
 print("Performance statistics:")
-
-roi_begin_ticks = simulator.get_tick_stopwatch()[0][1]
-roi_end_ticks = simulator.get_tick_stopwatch()[1][1]
-
-print("roi simulated ticks: " + str(roi_end_ticks - roi_begin_ticks))
 
 print(
     "Ran a total of", simulator.get_current_tick() / 1e12, "simulated seconds"

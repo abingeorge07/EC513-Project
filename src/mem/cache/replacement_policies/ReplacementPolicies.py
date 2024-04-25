@@ -79,6 +79,13 @@ class LRURP(BaseReplacementPolicy):
     cxx_header = "mem/cache/replacement_policies/lru_rp.hh"
 
 
+# added this to include ML_RP 
+# EC513 Project
+class MLRP(BaseReplacementPolicy):
+    type = "MLRP"
+    cxx_class = "gem5::replacement_policy::ml_rp"
+    cxx_header = "mem/cache/replacement_policies/ml_rp.hh"
+
 class BIPRP(LRURP):
     type = "BIPRP"
     cxx_class = "gem5::replacement_policy::BIP"
@@ -175,3 +182,13 @@ class WeightedLRURP(LRURP):
     type = "WeightedLRURP"
     cxx_class = "gem5::replacement_policy::WeightedLRU"
     cxx_header = "mem/cache/replacement_policies/weighted_lru_rp.hh"
+
+class HawkeyeRP(BaseReplacementPolicy):
+    type = "HawkeyeRP"
+    cxx_class = "gem5::replacement_policy::Hawkeye"
+    cxx_header = "mem/cache/replacement_policies/hawkeye_rp.hh"
+
+class RLRRP(BaseReplacementPolicy):
+    type = "RLRRP"
+    cxx_class = "gem5::replacement_policy::RLR"
+    cxx_header = "mem/cache/replacement_policies/RLR.hh"
