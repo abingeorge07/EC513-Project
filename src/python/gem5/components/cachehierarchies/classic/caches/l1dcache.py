@@ -31,6 +31,12 @@ from m5.objects import Cache, BasePrefetcher, StridePrefetcher
 from typing import Type
 
 
+
+from m5.objects.ReplacementPolicies import *
+from m5.params import *
+
+
+
 class L1DCache(Cache):
     """
     A simple L1 data cache with default values.
@@ -61,3 +67,4 @@ class L1DCache(Cache):
         self.tgts_per_mshr = tgts_per_mshr
         self.writeback_clean = writeback_clean
         self.prefetcher = PrefetcherCls()
+

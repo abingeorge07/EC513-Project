@@ -1024,7 +1024,7 @@ BaseCache::updateCompressionData(CacheBlk *&blk, const uint64_t* data,
         CacheBlk *victim = nullptr;
         if (replaceExpansions || is_data_contraction) {
             victim = tags->findVictim(regenerateBlkAddr(blk),
-                blk->isSecure(), compression_size, evict_blks);
+                blk->isSecure(), compression_size, evict_blks, nullptr);
 
             // It is valid to return nullptr if there is no victim
             if (!victim) {
@@ -1041,6 +1041,10 @@ BaseCache::updateCompressionData(CacheBlk *&blk, const uint64_t* data,
             }
 
             // Print victim block's information
+            // printf("Cache Victim INFO\n");
+            // printf("Data %s replacement victim: %s\n",
+            //     op_name.c_str(), (victim->print()).c_str());
+
             DPRINTF(CacheRepl, "Data %s replacement victim: %s\n",
                 op_name, victim->print());
         } else {
@@ -1099,6 +1103,8 @@ BaseCache::satisfyRequest(PacketPtr pkt, CacheBlk *blk, bool, bool)
     // invalidate their blocks after receiving them.
     // assert(!pkt->needsWritable() || blk->isSet(CacheBlk::WritableBit));
     assert(pkt->getOffset(blkSize) + pkt->getSize() <= blkSize);
+
+    // printf("Packet address is %lx\n", pkt->getAddr());
 
     // Check RMW operations first since both isRead() and
     // isWrite() will be true for them
@@ -1632,8 +1638,13 @@ BaseCache::allocateBlock(const PacketPtr pkt, PacketList &writebacks)
 
     // Find replacement victim
     std::vector<CacheBlk*> evict_blks;
+
+    // using a struct to share data
+    struct dataStruct* testPtr;
+    testPtr->pkt = pkt;
+
     CacheBlk *victim = tags->findVictim(addr, is_secure, blk_size_bits,
-                                        evict_blks);
+                                        evict_blks, (void*)testPtr);
 
     // It is valid to return nullptr if there is no victim
     if (!victim)
@@ -1684,6 +1695,7 @@ void
 BaseCache::evictBlock(CacheBlk *blk, PacketList &writebacks)
 {
     PacketPtr pkt = evictBlock(blk);
+    // printf("Evict block %s\n", (pkt->print()).c_str());
     if (pkt) {
         writebacks.push_back(pkt);
     }

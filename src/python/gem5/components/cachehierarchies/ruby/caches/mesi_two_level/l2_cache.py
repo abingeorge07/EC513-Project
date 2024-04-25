@@ -28,6 +28,7 @@ from ..abstract_l2_cache import AbstractL2Cache
 from ......utils.override import *
 
 from m5.objects import MessageBuffer, RubyCache
+from m5.objects.ReplacementPolicies import *
 
 import math
 
@@ -43,7 +44,7 @@ class L2Cache(AbstractL2Cache):
             size=l2_size,
             assoc=l2_assoc,
             start_index_bit=self.getIndexBit(num_l2Caches),
-            replacement_policy= RandomRP()
+            # replacement_policy = RandomRP()
         )
 
         self.transitions_per_cycle = 4

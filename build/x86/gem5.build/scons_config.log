@@ -1,0 +1,133 @@
+file /projectnb/ec513/students/abg309/Project/HW6/spec-2017/EC513-Project/site_scons/gem5_scons/configure.py,line 171:
+	Configure(confdir = build/x86/gem5.build/scons_config)
+scons: Configure: Checking for linker -Wl,--as-needed support... 
+build/x86/gem5.build/scons_config/conftest_da935ab7a2c376c10f2ce1130ab88c51_0.cc <-
+  |int main(int, char *[]) { return 0; }
+(B[m [     CXX] [33mx86/gem5.build/scons_config/conftest_da935ab7a2c376c10f2ce1130ab88c51_0[33m[1m.cc[34m[1m -> [33m[1m.o(B[m
+(B[m [    LINK] [33m[33m[1m[34m[1m -> [33m[1mx86/gem5.build/scons_config/conftest_da935ab7a2c376c10f2ce1130ab88c51_0_0c8e7ce101d4f673daaae63eb9a6501d(B[m
+scons: Configure: yes
+
+
+file /projectnb/ec513/students/abg309/Project/HW6/spec-2017/EC513-Project/site_scons/gem5_scons/configure.py,line 171:
+	Configure(confdir = build/x86/gem5.build/scons_config)
+scons: Configure: Checking for compiler -gz support... 
+build/x86/gem5.build/scons_config/conftest_342d5457cbf4639ef3e0d4fb7b8ef89b_0.cc <-
+  |// CheckCxxFlag DO NOTHING
+(B[m [     CXX] [33mx86/gem5.build/scons_config/conftest_342d5457cbf4639ef3e0d4fb7b8ef89b_0[33m[1m.cc[34m[1m -> [33m[1m_920217efc2530d55246d9038b48c6d2c.o(B[m
+scons: Configure: yes
+
+scons: Configure: Checking for linker -gz support... 
+build/x86/gem5.build/scons_config/conftest_da935ab7a2c376c10f2ce1130ab88c51_1.cc <-
+  |int main(int, char *[]) { return 0; }
+(B[m [     CXX] [33mx86/gem5.build/scons_config/conftest_da935ab7a2c376c10f2ce1130ab88c51_1[33m[1m.cc[34m[1m -> [33m[1m.o(B[m
+(B[m [    LINK] [33m[33m[1m[34m[1m -> [33m[1mx86/gem5.build/scons_config/conftest_da935ab7a2c376c10f2ce1130ab88c51_1_0abe906c9d105e365963a1d9491915c4(B[m
+scons: Configure: yes
+
+
+file /projectnb/ec513/students/abg309/Project/HW6/spec-2017/EC513-Project/site_scons/gem5_scons/configure.py,line 171:
+	Configure(confdir = build/x86/gem5.build/scons_config)
+
+file /projectnb/ec513/students/abg309/Project/HW6/spec-2017/EC513-Project/site_scons/gem5_scons/configure.py,line 171:
+	Configure(confdir = build/x86/gem5.build/scons_config)
+scons: Configure: Checking for C header file Python.h... 
+build/x86/gem5.build/scons_config/conftest_6f79fff2b5fa95157216534d203df494_0.c <-
+  |
+  |#include <Python.h>
+  |
+  |
+(B[m [      CC] [33mx86/gem5.build/scons_config/conftest_6f79fff2b5fa95157216534d203df494_0[33m[1m.c[34m[1m -> [33m[1m_3bd901be033c3af58eae78022f4eacd2.o(B[m
+scons: Configure: yes
+
+scons: Configure: Checking Python version... 
+build/x86/gem5.build/scons_config/conftest_2176b2d932a60acfa5b4079f6e5ab92b_0.cc <-
+  |
+  |#include <pybind11/embed.h>
+  |
+  |int
+  |main(int argc, char **argv) {
+  |    pybind11::scoped_interpreter guard{};
+  |    pybind11::exec(
+  |        "import sys\n"
+  |        "vi = sys.version_info\n"
+  |        "sys.stdout.write('%i.%i.%i' % (vi.major, vi.minor, vi.micro));\n");
+  |    return 0;
+  |}
+  |    
+(B[m [     CXX] [33mx86/gem5.build/scons_config/conftest_2176b2d932a60acfa5b4079f6e5ab92b_0[33m[1m.cc[34m[1m -> [33m[1m.o(B[m
+(B[m [    LINK] [33m[33m[1m[34m[1m -> [33m[1mx86/gem5.build/scons_config/conftest_2176b2d932a60acfa5b4079f6e5ab92b_0_cb5f31e261a9db4f85e6d99a131eb5d2(B[m
+build/x86/gem5.build/scons_config/conftest_2176b2d932a60acfa5b4079f6e5ab92b_0_cb5f31e261a9db4f85e6d99a131eb5d2 > build/x86/gem5.build/scons_config/conftest_2176b2d932a60acfa5b4079f6e5ab92b_0_cb5f31e261a9db4f85e6d99a131eb5d2.out
+scons: Configure: 3.10.12
+
+
+file /projectnb/ec513/students/abg309/Project/HW6/spec-2017/EC513-Project/site_scons/gem5_scons/configure.py,line 171:
+	Configure(confdir = build/x86/gem5.build/scons_config)
+scons: Configure: Checking for accept(0,0,0) in C++ library None... 
+build/x86/gem5.build/scons_config/conftest_af8423c78aecfef602aceff7a3b40c1c_0.cpp <-
+  |
+  |
+  |#include "sys/socket.h"
+  |
+  |int
+  |main() {
+  |  accept(0,0,0);
+  |return 0;
+  |}
+  |
+(B[m [     CXX] [33mx86/gem5.build/scons_config/conftest_af8423c78aecfef602aceff7a3b40c1c_0[33m[1m.cpp[34m[1m -> [33m[1m.o(B[m
+(B[m [    LINK] [33m[33m[1m[34m[1m -> [33m[1mx86/gem5.build/scons_config/conftest_af8423c78aecfef602aceff7a3b40c1c_0_e250cfceed9c052337e3a236676b7aad(B[m
+scons: Configure: yes
+
+scons: Configure: Checking for zlibVersion() in C++ library z... 
+build/x86/gem5.build/scons_config/conftest_127f08e7208dda7ee2cdf0b86065031e_0.cpp <-
+  |
+  |
+  |#include "zlib.h"
+  |
+  |int
+  |main() {
+  |  zlibVersion();
+  |return 0;
+  |}
+  |
+(B[m [     CXX] [33mx86/gem5.build/scons_config/conftest_127f08e7208dda7ee2cdf0b86065031e_0[33m[1m.cpp[34m[1m -> [33m[1m.o(B[m
+(B[m [    LINK] [33m[33m[1m[34m[1m -> [33m[1mx86/gem5.build/scons_config/conftest_127f08e7208dda7ee2cdf0b86065031e_0_de0a30ac2ebe95f218c70a6aa56ac120(B[m
+scons: Configure: yes
+
+
+file /projectnb/ec513/students/abg309/Project/HW6/spec-2017/EC513-Project/site_scons/gem5_scons/configure.py,line 171:
+	Configure(confdir = build/x86/gem5.build/scons_config)
+scons: Configure: Checking for C library tcmalloc_minimal... 
+build/x86/gem5.build/scons_config/conftest_df286a1d2f67e69d030b4eff75ca7e12_0.c <-
+  |
+  |
+  |
+  |int
+  |main() {
+  |  
+  |return 0;
+  |}
+  |
+(B[m [      CC] [33mx86/gem5.build/scons_config/conftest_df286a1d2f67e69d030b4eff75ca7e12_0[33m[1m.c[34m[1m -> [33m[1m.o(B[m
+(B[m [    LINK] [33m[33m[1m[34m[1m -> [33m[1mx86/gem5.build/scons_config/conftest_df286a1d2f67e69d030b4eff75ca7e12_0_8c1f907863d542c126dca1573401494c(B[m
+/usr/bin/ld: cannot find -ltcmalloc_minimal
+collect2: error: ld returned 1 exit status
+scons: Configure: no
+
+scons: Configure: Checking for C library tcmalloc... 
+build/x86/gem5.build/scons_config/conftest_df286a1d2f67e69d030b4eff75ca7e12_1.c <-
+  |
+  |
+  |
+  |int
+  |main() {
+  |  
+  |return 0;
+  |}
+  |
+(B[m [      CC] [33mx86/gem5.build/scons_config/conftest_df286a1d2f67e69d030b4eff75ca7e12_1[33m[1m.c[34m[1m -> [33m[1m.o(B[m
+(B[m [    LINK] [33m[33m[1m[34m[1m -> [33m[1mx86/gem5.build/scons_config/conftest_df286a1d2f67e69d030b4eff75ca7e12_1_e996661023c7ef8440cecdd677300e42(B[m
+/usr/bin/ld: cannot find -ltcmalloc
+collect2: error: ld returned 1 exit status
+scons: Configure: no
+
+
