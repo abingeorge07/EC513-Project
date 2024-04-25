@@ -62,7 +62,6 @@ class MESITwoLevelCacheHierarchy(
         l2_assoc: str,
         num_l2_banks: int,
     ):
-
         AbstractRubyCacheHierarchy.__init__(self=self)
         AbstractTwoLevelCacheHierarchy.__init__(
             self,

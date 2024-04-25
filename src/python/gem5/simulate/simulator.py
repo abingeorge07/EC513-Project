@@ -64,7 +64,7 @@ class Simulator:
     simulator = Simulator(board=board)
     simulator.run()
     ```
-    czv
+
     This will run a simulation and execute default behavior for exit events.
     """
 

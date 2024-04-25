@@ -76,7 +76,6 @@
 #include "sim/sim_exit.hh"
 #include "sim/system.hh"
 
-
 namespace gem5
 {
 
@@ -88,12 +87,6 @@ class MSHR;
 class RequestPort;
 class QueueEntry;
 struct BaseCacheParams;
-
-// dataStruct used to share pkt data to replacement policy file
-struct dataStruct{
-    PacketPtr pkt;
-};
-
 
 /**
  * A basic cache interface. Implements some common functions for speed.
@@ -829,8 +822,6 @@ class BaseCache : public ClockedObject
      * @param blk Block to invalidate
      */
     void invalidateBlock(CacheBlk *blk);
-
-
 
     /**
      * Create a writeback request for the given block.
