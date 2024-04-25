@@ -162,9 +162,6 @@ Cache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
               PacketList &writebacks)
 {
 
-    // printf("CACHE IS BEING ACCESSED [ACCESS]!\n");
-    // printf("%s\n", (pkt->print()).c_str());
-
     if (pkt->req->isUncacheable()) {
         assert(pkt->isRequest());
 
@@ -195,7 +192,7 @@ Cache::doWritebacks(PacketList& writebacks, Tick forward_time)
     while (!writebacks.empty()) {
         PacketPtr wbPkt = writebacks.front();
         // We use forwardLatency here because we are copying writebacks to
-        // write buffera.
+        // write buffer.
 
         // Call isCachedAbove for Writebacks, CleanEvicts and
         // WriteCleans to discover if the block is cached above.
@@ -319,7 +316,6 @@ Cache::handleTimingReqHit(PacketPtr pkt, CacheBlk *blk, Tick request_time)
     // flush and invalidate any existing block as part of the
     // lookup
     assert(!pkt->req->isUncacheable());
-    // printf("CACHE HIT [handleTimingReqHit]\n");
 
     BaseCache::handleTimingReqHit(pkt, blk, request_time);
 }
@@ -328,14 +324,13 @@ void
 Cache::handleTimingReqMiss(PacketPtr pkt, CacheBlk *blk, Tick forward_time,
                            Tick request_time)
 {
-    // printf("recvTimingReq\n");
 
     // These should always hit due to the earlier Locked Read
     assert(pkt->cmd != MemCmd::LockedRMWWriteReq);
     if (pkt->req->isUncacheable()) {
         // ignore any existing MSHR if we are dealing with an
         // uncacheable request
-        // printf("CACHE MISS!\n");
+
         // should have flushed and have no valid block
         assert(!blk || !blk->isValid());
 
