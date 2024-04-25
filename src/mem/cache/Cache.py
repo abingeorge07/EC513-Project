@@ -117,11 +117,7 @@ class BaseCache(ClockedObject):
     tags = Param.BaseTags(BaseSetAssoc(), "Tag store")
     # print("REPLACEMENT POLICY IS RANDOM")
     replacement_policy = Param.BaseReplacementPolicy(
-<<<<<<< HEAD
         RLRRP(), "Replacement policy"
-=======
-        RandomRP(), "Replacement policy"
->>>>>>> e0a128f6564960bcab74f9cd48796e3b58821ae1
     )
 
     compressor = Param.BaseCacheCompressor(NULL, "Cache compressor.")
@@ -236,12 +232,8 @@ class BaseCache2(ClockedObject):
     tags = Param.BaseTags(BaseSetAssoc(), "Tag store")
     # print("REPLACEMENT POLICY IS RANDOM")
     replacement_policy = Param.BaseReplacementPolicy(
-<<<<<<< HEAD
         RLRRP(), "Replacement policy"
-=======
-        RandomRP(), "Replacement policy"
->>>>>>> e0a128f6564960bcab74f9cd48796e3b58821ae1
-    )
+        )
 
     compressor = Param.BaseCacheCompressor(NULL, "Cache compressor.")
     replace_expansions = Param.Bool(
