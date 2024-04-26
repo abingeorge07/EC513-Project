@@ -28,7 +28,7 @@ Hawkeye::Hawkeye(const Params &p)
             RRIPCacheData temp_data;
             temp_data.RRIP = 7;
             temp_data.index = 0;
-            temp_data.tag = 0;
+            temp_data.tag = UINT64_MAX; // default value to mark it as invalid
             temp_data.first_touch = true;
             temp.push_back(temp_data);
         }
@@ -46,6 +46,21 @@ Hawkeye::invalidate(const std::shared_ptr<ReplacementData>& replacement_data)
     // Unprioritize replacement data victimization
     std::static_pointer_cast<HawkeyeReplData>(
         replacement_data)->valid = false;
+    
+    // We also invalidate the corresponding entry in RRIP vector
+    // cast the replacement data to HawkeyeReplData
+    HawkeyeReplData* hawkeye_data = static_cast<HawkeyeReplData*>(replacement_data.get());
+    int index = hawkeye_data->index;
+    uint64_t tag = hawkeye_data->tag;
+    for(int i = 0; i < RRIP_vector[index].size(); i++){
+        if(RRIP_vector[index][i].tag == tag){
+            RRIP_vector[index][i].tag = UINT64_MAX;
+            RRIP_vector[index][i].RRIP = 7;
+            RRIP_vector[index][i].first_touch = true;
+            break;
+        }
+    }
+
 }
 
 void Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data) const
@@ -57,12 +72,13 @@ void Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data) co
 void
 Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data, const PacketPtr pkt)
 {
+    std::cout << "Init step" << std::endl;
     // get the PC from the packet
     if(pkt->req->hasPC() == false){
         //std::cout << "No PC found in the packet" << std::endl;
         return;
     }
-    //std::cout << "PC found in the packet" << std::endl;
+    std::cout << "PC found in the packet" << std::endl;
     Addr pc = pkt->req->getPC();
     // get the first 13 bits of the PC
     int pc_index = pc & 0x1FFF;
@@ -71,37 +87,66 @@ Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data, const P
         //std::cout << "No address found in the packet" << std::endl;
         return;
     }
-    //std::cout << "Address found in the packet" << std::endl;
+    std::cout << "Address found in the packet" << std::endl;
     Addr addr = pkt->req->getPaddr();
     // get the index bits
     int index_bits = (addr >> 3) & index_bit_mask;
     // get the tag bits
     uint64_t tag_bits = addr >> (3 + index_bit_count);
 
+    std::cout << "Init step finished" << std::endl;
+    // I hope I know what I am doing
+    // cast the replacement data to HawkeyeReplData
+    HawkeyeReplData* hawkeye_data = static_cast<HawkeyeReplData*>(replacement_data.get());
+    hawkeye_data->index = index_bits;
+    hawkeye_data->tag = tag_bits;
+    // We need these to invalidate the correct entry in RRIP vector
+    std::cout << "Wrote index and tag" << std::endl;
+
     //std::cout << "before element get" << std::endl;
 
+    bool prediction = true;
+
+    std::cout << "Before searching for element" << std::endl;
     // get the correct element
     bool found = false;
-    RRIPCacheData* element;
+    RRIPCacheData* element = nullptr;
     for(int i = 0; i < RRIP_vector[index_bits].size(); i++){
         if(RRIP_vector[index_bits][i].tag == tag_bits){
             element = &RRIP_vector[index_bits][i];
             found = true;
         }
     }
+    std::cout << "Searched for element" << std::endl;
     if(!found){
         std::cout << "Element not found" << std::endl;
         // we need to initialize it!
         // and also we need to invalidate the entry from RRIP vector, too
         // Like we are managing our own cache
-        return;
+        // I assume that we don't need to find a victim, there is available space
+        for(int i = 0; i < RRIP_vector[index_bits].size(); i++){
+            if(RRIP_vector[index_bits][i].tag == UINT64_MAX){
+                element = &RRIP_vector[index_bits][i];
+                element->tag = tag_bits;
+                element->first_touch = true;
+                element->RRIP = 7;
+                element->index = index_bits; // TODO:
+                break;
+            }
+        }
+        prediction = false;
+        if(element == nullptr){
+            panic("Element is still nullptr");
+        }
+    }
+    else{
+        std::cout << "Element found" << std::endl;
+        // write the prediction here!
+
     }
 
-    //std::cout << "after element get" << std::endl;
 
 
-    bool prediction = true;
-    // Assume prediction is done
     if(prediction == false){ // Averse
         // Update RRIP vector
         //std::cout << "prediction is false" << std::endl;
@@ -120,7 +165,7 @@ Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data, const P
             for(int i = 0; i < RRIP_vector[index_bits].size(); i++){
                 //std::cout << "index: " << i << std::endl;
                 if(RRIP_vector[index_bits][i].RRIP < 7){
-                    RRIP_vector[index_bits][i].RRIP++;
+                    RRIP_vector[index_bits][i].RRIP++; // this is not a problem for invalid entries, they will be initialized later anyway
                 }
             }
             std::cout << "Updated RRIP vector" << std::endl;
@@ -145,6 +190,9 @@ Hawkeye::reset(const std::shared_ptr<ReplacementData>& replacement_data, const P
     // Unprioritize replacement data victimization
     std::static_pointer_cast<HawkeyeReplData>(
         replacement_data)->valid = true;
+    
+    // just call the touch method
+    touch(replacement_data, pkt);
 }
 
 ReplaceableEntry*

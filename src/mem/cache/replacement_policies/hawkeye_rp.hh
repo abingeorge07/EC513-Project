@@ -41,12 +41,16 @@ class Hawkeye : public Base
          * Invalid entries are prioritized to be evicted.
          */
         bool valid;
+        int index;
+        uint64_t tag;
 
         /**
          * Default constructor. Invalidate data.
          */
         HawkeyeReplData(){
             valid = false;
+            index = 0;
+            tag = UINT64_MAX;
         }
     };
     struct RRIPCacheData{
