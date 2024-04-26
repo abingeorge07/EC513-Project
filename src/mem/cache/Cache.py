@@ -232,7 +232,7 @@ class BaseCache2(ClockedObject):
     tags = Param.BaseTags(BaseSetAssoc(), "Tag store")
     # print("REPLACEMENT POLICY IS RANDOM")
     replacement_policy = Param.BaseReplacementPolicy(
-        RandomRP(), "Replacement policy"
+        Hawkeye2RP(), "Replacement policy"
     )
 
     compressor = Param.BaseCacheCompressor(NULL, "Cache compressor.")

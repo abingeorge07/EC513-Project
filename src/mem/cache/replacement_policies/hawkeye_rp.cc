@@ -36,6 +36,7 @@ Hawkeye::Hawkeye(const Params &p)
         RRIP_vector.push_back(temp);
     }
 
+    offset_bit_count = p.offset_bit_count;
     index_bit_count = p.index_bit_count;
     index_bit_mask = (1 << index_bit_count) - 1;
 }
@@ -94,9 +95,9 @@ Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data, const P
     //std::cout << "Address found in the packet" << std::endl;
     Addr addr = pkt->req->getPaddr();
     // get the index bits
-    int index_bits = (addr >> 3) & index_bit_mask;
+    int index_bits = (addr >> offset_bit_count) & index_bit_mask;
     // get the tag bits
-    uint64_t tag_bits = addr >> (3 + index_bit_count);
+    uint64_t tag_bits = addr >> (offset_bit_count + index_bit_count);
 
     //std::cout << "Init step finished" << std::endl;
     // I hope I know what I am doing
@@ -211,9 +212,9 @@ Hawkeye::reset(const std::shared_ptr<ReplacementData>& replacement_data, const P
     //std::cout << "Reset Address found in the packet" << std::endl;
     Addr addr = pkt->req->getPaddr();
     // get the index bits
-    int index_bits = (addr >> 3) & index_bit_mask;
+    int index_bits = (addr >> offset_bit_count) & index_bit_mask;
     // get the tag bits
-    uint64_t tag_bits = addr >> (3 + index_bit_count);
+    uint64_t tag_bits = addr >> (offset_bit_count + index_bit_count);
 
     //std::cout << "Reset Init step finished" << std::endl;
     // I hope I know what I am doing

@@ -65,6 +65,8 @@ class Hawkeye : public Base
     int way_assoc;
     int index_bit_count;
     int index_bit_mask;
+    int offset_bit_count;
+    int tag_bit_count;
     typedef HawkeyeRPParams Params;
     Hawkeye(const Params &p);
     ~Hawkeye() = default;
