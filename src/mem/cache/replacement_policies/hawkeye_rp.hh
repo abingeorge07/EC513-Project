@@ -56,7 +56,6 @@ class Hawkeye : public Base
     struct RRIPCacheData{
         int RRIP;
         int index;
-        bool first_touch;
         uint64_t tag;
     };
 
