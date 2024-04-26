@@ -72,6 +72,8 @@ class Hawkeye : public Base
     std::vector<std::vector<RRIPCacheData>> RRIP_vector;
     // occupancy vector will be very tricky to implement efficiently
     std::vector<std::deque<OPTGenData>> occupancy_vector;
+    std::vector<int> hawkeye_predictor_vector;
+    bool hawkeye_predictor(OPTGenResponse resp);
     int vector_size;
     int way_assoc;
     int index_bit_count;

@@ -41,6 +41,8 @@ Hawkeye::Hawkeye(const Params &p)
     index_bit_mask = (1 << index_bit_count) - 1;
 
     initialize_occupancy_vector();
+
+    hawkeye_predictor_vector.resize(1 << 13, 0);
 }
 
 void Hawkeye::initialize_occupancy_vector(){
@@ -55,12 +57,28 @@ void Hawkeye::initialize_occupancy_vector(){
     //std::cout << "initialized" << std::endl;
 }
 
+bool Hawkeye::hawkeye_predictor(OPTGenResponse resp){
+    uint64_t pc = resp.last_pc;
+    bool hit = resp.hit;
+    // if hit is true, we have a cache-friendly access, train positively
+    hawkeye_predictor_vector[pc] += hit ? 1 : -1;
+    // predictor must be between 0 and 7
+    if(hawkeye_predictor_vector[pc] < 0){
+        hawkeye_predictor_vector[pc] = 0;
+    }
+    if(hawkeye_predictor_vector[pc] > 7){
+        hawkeye_predictor_vector[pc] = 7;
+    }
+    // if the predictor is greater than 3, we predict cache-friendly
+    return hawkeye_predictor_vector[pc] > 3;
+}
+
 Hawkeye::OPTGenResponse Hawkeye::occupancy_vector_query(int index, uint64_t address, int pc){
     //std::cout << "called query" << std::endl;
     // the deque that we consider is occupancy_vector[index]
     std::deque<OPTGenData>& deque = occupancy_vector[index];
     // take the last 13 bits of the pc, TODO: use different hash
-    int hashed_pc = pc & 0x1FFF;
+    int hashed_pc = (pc >> 6) & 0x1FFF;
     // the deque is full if its size is 8*way_assoc
     // remove the first element
     if(deque.size() == 8*way_assoc){
@@ -112,8 +130,6 @@ Hawkeye::OPTGenResponse Hawkeye::occupancy_vector_query(int index, uint64_t addr
     //std::cout << "incremented" << std::endl;
     
     return {hashed_pc, hit};
-
-
 }
 
 // this is called when an entry is evicted
@@ -161,7 +177,7 @@ Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data, const P
     //std::cout << "PC found in the packet" << std::endl;
     Addr pc = pkt->req->getPC();
     // get the first 13 bits of the PC
-    int pc_index = pc & 0x1FFF;
+    //int pc_index = (pc >> 6) & 0x1FFF;
     // get the address of the request
     if(pkt->req->hasPaddr() == false){
         ////std::cout << "No address found in the packet" << std::endl;
@@ -187,9 +203,7 @@ Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data, const P
 
     bool prediction = true;
     OPTGenResponse resp = occupancy_vector_query(index_bits, addr, pc);
-    if(resp.hit == false){
-        prediction = false;
-    }
+    prediction = hawkeye_predictor(resp);
     
     // We'll call Hawkeye predictor here, the above thing is just for trial
 
@@ -284,7 +298,7 @@ Hawkeye::reset(const std::shared_ptr<ReplacementData>& replacement_data, const P
     //std::cout << "Reset PC found in the packet" << std::endl;
     Addr pc = pkt->req->getPC();
     // get the first 13 bits of the PC
-    int pc_index = pc & 0x1FFF;
+    //int pc_index = pc & 0x1FFF;
     // get the address of the request
     if(pkt->req->hasPaddr() == false){
         ////std::cout << "No address found in the packet" << std::endl;
@@ -332,13 +346,7 @@ Hawkeye::reset(const std::shared_ptr<ReplacementData>& replacement_data, const P
     // Wrong, do prediction here
     bool prediction = false;
     OPTGenResponse resp = occupancy_vector_query(index_bits, addr, pc);
-    if(resp.hit == false){
-        prediction = false;
-    }
-    else{
-        prediction = true;
-    }
-    // placeholder prediction!
+    prediction = hawkeye_predictor(resp);
 
     if(element == nullptr){
         panic("Reset Element is still nullptr");
