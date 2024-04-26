@@ -58,9 +58,20 @@ class Hawkeye : public Base
         int index;
         uint64_t tag;
     };
+    struct OPTGenData{
+        int hashed_pc;
+        uint64_t address;
+        int occupancy_count;
+    };
+    struct OPTGenResponse{
+        int last_pc;
+        bool hit;
+    };
 
   public:
     std::vector<std::vector<RRIPCacheData>> RRIP_vector;
+    // occupancy vector will be very tricky to implement efficiently
+    std::vector<std::deque<OPTGenData>> occupancy_vector;
     int vector_size;
     int way_assoc;
     int index_bit_count;
@@ -68,6 +79,8 @@ class Hawkeye : public Base
     int offset_bit_count;
     int tag_bit_count;
     typedef HawkeyeRPParams Params;
+    void initialize_occupancy_vector();
+    OPTGenResponse occupancy_vector_query(int index, uint64_t address, int pc);
     Hawkeye(const Params &p);
     ~Hawkeye() = default;
 

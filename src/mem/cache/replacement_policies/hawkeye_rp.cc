@@ -18,8 +18,8 @@ namespace replacement_policy
 Hawkeye::Hawkeye(const Params &p)
   : Base(p)
 {
-    int vector_size = p.cache_size * 1024;
-    int way_assoc = p.assoc;
+    vector_size = p.cache_size * 1024;
+    way_assoc = p.assoc;
 
     // start by initializing the RRIP vector
     for(int i = 0; i < vector_size/way_assoc; i++){
@@ -39,6 +39,81 @@ Hawkeye::Hawkeye(const Params &p)
     offset_bit_count = p.offset_bit_count;
     index_bit_count = p.index_bit_count;
     index_bit_mask = (1 << index_bit_count) - 1;
+
+    initialize_occupancy_vector();
+}
+
+void Hawkeye::initialize_occupancy_vector(){
+    // initialize the occupancy vector
+    //std::cout << "initializing occupancy vector" << std::endl;
+    int set_count = vector_size/way_assoc;
+    //std::cout << "set count: " << set_count << std::endl;
+    for(int i = 0; i < set_count; i++){
+        std::deque<OPTGenData> temp;
+        occupancy_vector.push_back(temp);
+    }
+    //std::cout << "initialized" << std::endl;
+}
+
+Hawkeye::OPTGenResponse Hawkeye::occupancy_vector_query(int index, uint64_t address, int pc){
+    //std::cout << "called query" << std::endl;
+    // the deque that we consider is occupancy_vector[index]
+    std::deque<OPTGenData>& deque = occupancy_vector[index];
+    // take the last 13 bits of the pc, TODO: use different hash
+    int hashed_pc = pc & 0x1FFF;
+    // the deque is full if its size is 8*way_assoc
+    // remove the first element
+    if(deque.size() == 8*way_assoc){
+        deque.pop_front();
+    }
+    //std::cout << "dequed" << std::endl;
+    // add the new element
+    OPTGenData temp_data;
+    temp_data.hashed_pc = hashed_pc;
+    temp_data.address = address;
+    temp_data.occupancy_count = 1; // because we don't have bypass
+    deque.push_back(temp_data);
+    //std::cout << "pushed" << std::endl;
+
+    // now train, we'll use belady optimal for training
+    // dirty implementation
+    // find the latest reference to the same address
+    int last_ref_index = 0;
+    for(int i = deque.size() - 1; i >= 0; i--){
+        if(deque[i].address == address){
+            last_ref_index = i;
+            break;
+        }
+    }
+    //std::cout << "found last ref" << std::endl;
+
+    // now belady, check if the occupancy count between the last reference and the current reference is less than 8
+    // if it is, we have a cache-friendly
+    // if it is not, we have a cache-averse
+    bool hit = true;
+    for(int i = last_ref_index + 1; i < deque.size(); i++){
+        if(deque[i].occupancy_count >= 8){
+            hit = false;
+            break;
+        }
+    }
+    //std::cout << "checked" << std::endl;
+
+    // if we have a miss, no need to update anything on the occupancy vector
+    if(hit == false){
+        return {hashed_pc, hit};
+    }
+    //std::cout << "not false" << std::endl;
+    // if we have a hit, we need to update the occupancy count every reference with ++
+    // Make sure the last one is not increased by 1 accidentally
+    for(int i = last_ref_index; i < deque.size() - 1; i++){
+        deque[i].occupancy_count++;
+    }
+    //std::cout << "incremented" << std::endl;
+    
+    return {hashed_pc, hit};
+
+
 }
 
 // this is called when an entry is evicted
@@ -111,6 +186,12 @@ Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data, const P
     ////std::cout << "before element get" << std::endl;
 
     bool prediction = true;
+    OPTGenResponse resp = occupancy_vector_query(index_bits, addr, pc);
+    if(resp.hit == false){
+        prediction = false;
+    }
+    
+    // We'll call Hawkeye predictor here, the above thing is just for trial
 
     //std::cout << "Before searching for element" << std::endl;
     // get the correct element
@@ -250,6 +331,14 @@ Hawkeye::reset(const std::shared_ptr<ReplacementData>& replacement_data, const P
     // This is the first appearance, the prediction will be averse
     // Wrong, do prediction here
     bool prediction = false;
+    OPTGenResponse resp = occupancy_vector_query(index_bits, addr, pc);
+    if(resp.hit == false){
+        prediction = false;
+    }
+    else{
+        prediction = true;
+    }
+    // placeholder prediction!
 
     if(element == nullptr){
         panic("Reset Element is still nullptr");
