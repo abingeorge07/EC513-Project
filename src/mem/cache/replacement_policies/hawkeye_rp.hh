@@ -62,6 +62,7 @@ class Hawkeye : public Base
         int hashed_pc;
         uint64_t address;
         int occupancy_count;
+        bool is_incremented; // True only if the occupancy count has been incremented as a result of its own cache usage
     };
     struct OPTGenResponse{
         int last_pc;
@@ -80,6 +81,8 @@ class Hawkeye : public Base
     int index_bit_mask;
     int offset_bit_count;
     int tag_bit_count;
+    bool true_if_l1;
+    int occupancy_vector_size;
     typedef HawkeyeRPParams Params;
     void initialize_occupancy_vector();
     OPTGenResponse occupancy_vector_query(int index, uint64_t address, int pc);
@@ -112,6 +115,8 @@ class Hawkeye : public Base
      */
     void reset(const std::shared_ptr<ReplacementData>& replacement_data,
         const PacketPtr pkt) override;
+    void reset_backup(const std::shared_ptr<ReplacementData>& replacement_data,
+        const PacketPtr pkt);
     void reset(const std::shared_ptr<ReplacementData>& replacement_data) const
         override;
 

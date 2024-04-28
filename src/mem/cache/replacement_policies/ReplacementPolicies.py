@@ -145,6 +145,7 @@ class HawkeyeRP(BaseReplacementPolicy):
     offset_bit_count = Param.Int(6, "Number of offset bits")
     index_bit_count = Param.Int(5, "Number of index bits")
     tag_bit_count = Param.Int(21, "Number of tag bits")
+    true_if_l1 = Param.Bool(False, "True if L1 cache, False if L2 cache")
 
 class Hawkeye2RP(BaseReplacementPolicy):
     type = "HawkeyeRP"
@@ -157,6 +158,7 @@ class Hawkeye2RP(BaseReplacementPolicy):
     offset_bit_count = Param.Int(6, "Number of offset bits")
     index_bit_count = Param.Int(10, "Number of index bits")
     tag_bit_count = Param.Int(16, "Number of tag bits")
+    true_if_l1 = Param.Bool(False, "True if L1 cache, False if L2 cache")
 
 class SHiPRP(BRRIPRP):
     type = "SHiPRP"
