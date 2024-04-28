@@ -85,11 +85,11 @@ bool Hawkeye::hawkeye_predictor(OPTGenResponse resp){
         hawkeye_predictor_vector[hashed_pc] = 7;
     }
     if(true_if_l1) std::cout << "Predictor: " << hashed_pc << " " << hawkeye_predictor_vector[hashed_pc] << std::endl;
-    // if the predictor is greater than 3, we predict cache-friendly
-    if(hawkeye_predictor_vector[hashed_pc] > 3){
-        return false;
+    // if the predictor is greater than or equal to 3, we predict cache-friendly
+    if(hawkeye_predictor_vector[hashed_pc] >= 3){
+        return true;
     }
-    return true;
+    return false;
 }
 
 Hawkeye::OPTGenResponse Hawkeye::occupancy_vector_query(int index, uint64_t address, int pc){
@@ -261,7 +261,7 @@ Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data, const P
 
     bool prediction = true;
     OPTGenResponse resp = occupancy_vector_query(index_bits, addr, pc);
-    //prediction = hawkeye_predictor(resp);
+    prediction = hawkeye_predictor(resp);
 
     // We'll call Hawkeye predictor here, the above thing is just for trial
     // Touch means the element is already here, no need for found
