@@ -1,0 +1,13 @@
+build/**
+build_tools/__pycache__/**
+util/m5/build/**
+site_scons/**
+src/arch/__pycache__/**
+**/__pycache__/**
+m5out/**
+parsetab.py
+*.out
+configs/tutorial/part1/simple.py
+*_cleaned.csv
+*.h5
+*.swp

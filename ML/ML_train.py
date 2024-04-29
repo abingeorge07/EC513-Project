@@ -79,6 +79,8 @@ if(dec == 0):
     outputData_train = (train_data_L1.iloc[:, train_data_L1.shape[1] - 1]).to_numpy()
     inputData_train = np.asarray(inputData_train).astype(np.float32)
     outputData_train = np.asarray(outputData_train).astype(np.float32)
+    outputData_train_onehot = np.zeros((outputData_train.shape[0], 16))
+    outputData_train_onehot[np.arange(outputData_train.shape[0]), outputData_train.astype(int)] = 1
 
     # print("Output data for L1: {}".format(outputData_train))
     # input("Pause")
@@ -88,6 +90,8 @@ if(dec == 0):
     outputData_test = (test_data_L1.iloc[:, test_data_L1.shape[1] - 1]).to_numpy()
     inputData_test = np.asarray(inputData_test).astype(np.float32)
     outputData_test = np.asarray(outputData_test).astype(np.float32)
+    outputData_test_onehot = np.zeros((outputData_test.shape[0], 16))
+    outputData_test_onehot[np.arange(outputData_test.shape[0]), outputData_test.astype(int)] = 1
 
     msk2 = np.random.rand(len(L2_data)) < 0.8
     train_data_L2 = L2_data[msk2]
@@ -95,23 +99,23 @@ if(dec == 0):
     outputData_train2 = (train_data_L2.iloc[:, train_data_L2.shape[1] - 1]).to_numpy()
     inputData_train2 = np.asarray(inputData_train2).astype(np.float32)
     outputData_train2 = np.asarray(outputData_train2).astype(np.float32)
+    outputData_train2_onehot = np.zeros((outputData_train2.shape[0], 16))
+    outputData_train2_onehot[np.arange(outputData_train2.shape[0]), outputData_train2.astype(int)] = 1
 
     test_data_L2 = L2_data[~msk2]
     inputData_test2 = (test_data_L2.iloc[:, 1:test_data_L2.shape[1] - 1]).to_numpy()
     outputData_test2 = (test_data_L2.iloc[:, test_data_L2.shape[1] - 1]).to_numpy()
     inputData_test2 = np.asarray(inputData_test2).astype(np.float32)
     outputData_test2 = np.asarray(outputData_test2).astype(np.float32)
-
-
-
-
+    outputData_test2_onehot = np.zeros((outputData_test2.shape[0], 16))
+    outputData_test2_onehot[np.arange(outputData_test2.shape[0]), outputData_test2.astype(int)] = 1
 
     # Training model for L1 Cache
     print("Training model for L1 Cache...")
 
     # Define the input and output dimensions
     input_dim = inputData_train.shape[1]
-    output_dim = 1
+    output_dim = 16 #1
 
     print("Input dimensions for L1: {}".format(input_dim))
     print("Output dimensions for L1: {}".format(output_dim))
@@ -124,30 +128,32 @@ if(dec == 0):
     model.add(tf.keras.layers.Dense(units=64, activation='tanh', input_shape=(input_dim,)))
 
     # Add additional hidden layers
-    # model.add(tf.keras.layers.Dense(units=175, activation='tanh'))
+    model.add(tf.keras.layers.Dense(units=175, activation='tanh'))
 
     # Add the output layer
-    model.add(tf.keras.layers.Dense(units=output_dim, activation='linear'))
+    model.add(tf.keras.layers.Dense(units=output_dim, activation='sigmoid'))
 
     # Compile the model
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     # Train the model
-    history = model.fit(inputData_train, outputData_train, epochs=1, batch_size=32, verbose=2)
+    history = model.fit(inputData_train, outputData_train_onehot, epochs=10, batch_size=32, verbose=2)
 
     # Get the training history
     history.history
 
     # Test the model
     print("Testing the model for L1 Cache...")
-    test_loss, test_accuracy = model.evaluate(inputData_test, outputData_test, verbose=2)
+    test_loss, test_accuracy = model.evaluate(inputData_test, outputData_test_onehot, verbose=2)
     print("Test accuracy: {}".format(test_accuracy))
     print("Test loss: {}".format(test_loss))
 
 
     # Predict
-    predictions = model.predict(inputData_test[0,:].reshape(1, input_dim))
-    print("Prediction: {} Actual: {}".format(predictions, outputData_test[0]))
+    predict_inputs = np.random.randint(1000, size=10)
+    for i in predict_inputs:
+        predictions = model.predict(inputData_test[i,:].reshape(1, input_dim))
+        print("Prediction Array: {}\nPrediction: {}\tActual: {}".format(predictions, np.argmax(predictions), outputData_test[i]))
 
 
     # Save the model
