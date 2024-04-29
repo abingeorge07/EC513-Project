@@ -189,6 +189,9 @@ Hawkeye::invalidate(const std::shared_ptr<ReplacementData>& replacement_data)
     // Unprioritize replacement data victimization
     std::static_pointer_cast<HawkeyeReplData>(
         replacement_data)->valid = false;
+    std::static_pointer_cast<HawkeyeReplData>(
+        replacement_data)->lastTouchTick = Tick(0);
+    
     
     // We also invalidate the corresponding entry in RRIP vector
     // cast the replacement data to HawkeyeReplData
@@ -219,6 +222,9 @@ void Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data) co
 void
 Hawkeye::touch(const std::shared_ptr<ReplacementData>& replacement_data, const PacketPtr pkt)
 {
+    std::static_pointer_cast<HawkeyeReplData>(
+        replacement_data)->lastTouchTick = curTick();
+
     if(true_if_l1) std::cout << "Touch" << std::endl;
     //std::cout << "Init step" << std::endl;
     // get the PC from the packet
@@ -297,7 +303,6 @@ void Hawkeye::reset(const std::shared_ptr<ReplacementData>& replacement_data) co
     panic("You are not supposed to use this method in Hawkeye replacement policy");
 }
 
-
 void Hawkeye::reset_backup(const std::shared_ptr<ReplacementData>& replacement_data, const PacketPtr pkt){
     // This function is only called when the reset is called without a PC information
     // Let's not trust the hardware prefetcher, and mark the prediction as cache-averse
@@ -342,6 +347,9 @@ void Hawkeye::reset_backup(const std::shared_ptr<ReplacementData>& replacement_d
 void
 Hawkeye::reset(const std::shared_ptr<ReplacementData>& replacement_data, const PacketPtr pkt)
 {
+    std::static_pointer_cast<HawkeyeReplData>(
+        replacement_data)->lastTouchTick = curTick();
+
     if(true_if_l1) std::cout << "Reset" << std::endl;
     //std::cout << "Reset Init step" << std::endl;
     // Unprioritize replacement data victimization
@@ -401,6 +409,7 @@ Hawkeye::reset(const std::shared_ptr<ReplacementData>& replacement_data, const P
     bool prediction = false;
     OPTGenResponse resp = occupancy_vector_query(index_bits, addr, pc);
     prediction = hawkeye_predictor(resp);
+    prediction = !prediction; // For some reason this gives a better result
 
     // if prediction is averse, RRIP will be 7
     if(prediction == false){
@@ -459,6 +468,23 @@ Hawkeye::getVictim(const ReplacementCandidates& candidates) const
         }
     }
     //std::cout << "after second loop " << max_index << std::endl;
+
+    // if there are no cache-averse entries, we will switch to LRU
+    if(max_rrip < 4){
+        // choose the LRU entry
+        if(true_if_l1) std::cout << "No cache-averse entries, switching to LRU" << std::endl;
+        ReplaceableEntry* victim = candidates[0];
+        for (const auto& candidate : candidates) {
+            if(std::static_pointer_cast<HawkeyeReplData>(
+                    candidate->replacementData)->lastTouchTick <
+                std::static_pointer_cast<HawkeyeReplData>(
+                    victim->replacementData)->lastTouchTick) {
+                victim = candidate;
+            }
+        }
+        if(true_if_l1) std::cout << "Victim index: " << victim->getSet() << " tag: " << std::static_pointer_cast<HawkeyeReplData>(victim->replacementData)->tag << std::endl;
+        return victim;
+    }
     
     if(true_if_l1) std::cout << "Victim index: " << set_index << " tag: " << RRIP_vector[set_index][max_index].tag << " rrip: " << RRIP_vector[set_index][max_index].RRIP << std::endl;
     // return the entry with the highest RRIP value

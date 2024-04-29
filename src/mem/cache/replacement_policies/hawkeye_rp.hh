@@ -43,6 +43,7 @@ class Hawkeye : public Base
         bool valid;
         int index;
         uint64_t tag;
+        Tick lastTouchTick; // as a backup LRU
 
         /**
          * Default constructor. Invalidate data.
@@ -70,6 +71,8 @@ class Hawkeye : public Base
     };
 
   public:
+    // Have a copy of LRU as a backup process
+
     std::vector<std::vector<RRIPCacheData>> RRIP_vector;
     // occupancy vector will be very tricky to implement efficiently
     std::vector<std::deque<OPTGenData>> occupancy_vector;
