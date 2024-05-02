@@ -42,7 +42,7 @@ class Hawkeye : public Base
          */
         bool valid;
         int index;
-        uint64_t tag;
+        int tag;
         Tick lastTouchTick; // as a backup LRU
 
         /**
@@ -51,13 +51,13 @@ class Hawkeye : public Base
         HawkeyeReplData(){
             valid = false;
             index = 0;
-            tag = UINT64_MAX;
+            tag = 0;
         }
     };
     struct RRIPCacheData{
         int RRIP;
         int index;
-        uint64_t tag;
+        int tag;
     };
     struct OPTGenData{
         int hashed_pc;
@@ -86,6 +86,8 @@ class Hawkeye : public Base
     int tag_bit_count;
     bool true_if_l1;
     int occupancy_vector_size;
+    int reset_call_count;
+    int prefetch_call_count;
     typedef HawkeyeRPParams Params;
     void initialize_occupancy_vector();
     OPTGenResponse occupancy_vector_query(int index, uint64_t address, int pc);
@@ -129,8 +131,7 @@ class Hawkeye : public Base
      * @param candidates Replacement candidates, selected by indexing policy.
      * @return Replacement entry to be replaced.
      */
-    ReplaceableEntry* getVictim(const ReplacementCandidates& candidates) const
-                                                                     override;
+    ReplaceableEntry* getVictim(const ReplacementCandidates& candidates) const override;
 
     /**
      * Instantiate a replacement data entry.
